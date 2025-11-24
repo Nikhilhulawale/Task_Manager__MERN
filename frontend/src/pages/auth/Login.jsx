@@ -51,7 +51,6 @@ const Login = () => {
         }
       )
 
-      console.log(response.data);
       
       dispatch(signInSuccess(response.data))
 
