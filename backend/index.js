@@ -27,7 +27,9 @@ const app = express();
 // -------- CORS FIXED --------
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://task-manager-mern-taupe.vercel.app"
+  "https://task-manager-mern-taupe.vercel.app",
+  "https://task-manager-mern-git-main-nikhil-hulawale-s-projects.vercel.app",
+  "https://task-manager-mern-prd2eng5v-nikhil-hulawale-s-projects.vercel.app"
 ];
 
 app.use(
