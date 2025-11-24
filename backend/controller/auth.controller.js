@@ -17,16 +17,12 @@ export const signup = async (req, res, next) => {
     return next(errorHandler(400, "All fields are required"))
   }
 
-  //   Check if user already exists
   const isAlreadyExist = await User.findOne({ email })
-
   if (isAlreadyExist) {
     return next(errorHandler(400, "User already exists"))
   }
 
-  //   check user role
   let role = "user"
-
   if (adminJoinCode && adminJoinCode === process.env.ADMIN_JOIN_CODE) {
     role = "admin"
   }
@@ -43,7 +39,6 @@ export const signup = async (req, res, next) => {
 
   try {
     await newUser.save()
-
     res.json("Signup successful")
   } catch (error) {
     next(error.message)
@@ -59,14 +54,11 @@ export const signin = async (req, res, next) => {
     }
 
     const validUser = await User.findOne({ email })
-
     if (!validUser) {
       return next(errorHandler(404, "User not found!"))
     }
 
-    // compare password
     const validPassword = bcryptjs.compareSync(password, validUser.password)
-
     if (!validPassword) {
       return next(errorHandler(400, "Wrong Credentials"))
     }
@@ -78,7 +70,15 @@ export const signin = async (req, res, next) => {
 
     const { password: pass, ...rest } = validUser._doc
 
-    res.status(200).cookie("access_token", token, { httpOnly: true }).json(rest)
+    // ✅ FIXED: Proper secure cookie settings for Render (HTTPS)
+    res
+      .status(200)
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: true,        // required on Render (HTTPS)
+        sameSite: "None",    // required for cross-domain cookie
+      })
+      .json(rest)
   } catch (error) {
     next(error)
   }
@@ -93,7 +93,6 @@ export const userProfile = async (req, res, next) => {
     }
 
     const { password: pass, ...rest } = user._doc
-
     res.status(200).json(rest)
   } catch (error) {
     next(error)
@@ -115,10 +114,9 @@ export const updateUserProfile = async (req, res, next) => {
       user.password = bcryptjs.hashSync(req.body.password, 10)
     }
 
-    const updatedUser = await user.save()
+    await user.save()
 
     const { password: pass, ...rest } = user._doc
-
     res.status(200).json(rest)
   } catch (error) {
     next(error)
@@ -131,10 +129,7 @@ export const uploadImage = async (req, res, next) => {
       return next(errorHandler(400, "No file uploaded"))
     }
 
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
-      req.file.filename
-    }`
-
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
     res.status(200).json({ imageUrl })
   } catch (error) {
     next(error)
@@ -144,7 +139,10 @@ export const uploadImage = async (req, res, next) => {
 export const signout = async (req, res, next) => {
   try {
     res
-      .clearCookie("access_token")
+      .clearCookie("access_token", {
+        sameSite: "None",
+        secure: true,
+      })
       .status(200)
       .json("User has been loggedout successfully!")
   } catch (error) {
