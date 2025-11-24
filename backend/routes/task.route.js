@@ -1,15 +1,7 @@
 import express from "express"
 import { adminOnly, verifyToken } from "../utils/verifyUser.js"
-import {
-  createTask,
-  deleteTask,
-  getDashboardData,
-  getTaskById,
-  getTasks,
-  updateTask,
-  updateTaskChecklist,
-  updateTaskStatus,
-  userDashboardData,
+import {createTask,deleteTask,getDashboardData,getTaskById,getTasks,updateTask,
+  updateTaskChecklist,updateTaskStatus,userDashboardData,
 } from "../controller/task.controller.js"
 
 const router = express.Router()

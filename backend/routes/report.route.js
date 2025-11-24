@@ -1,8 +1,6 @@
 import express from "express"
 import { adminOnly, verifyToken } from "../utils/verifyUser.js"
-import {
-  exportTaskReport,
-  exportUsersReport,
+import {exportTaskReport,exportUsersReport,
 } from "../controller/report.controller.js"
 
 const router = express.Router()
