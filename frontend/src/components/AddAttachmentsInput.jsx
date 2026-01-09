@@ -5,7 +5,8 @@ import { MdDelete } from "react-icons/md"
 
 const AddAttachmentsInput = ({ attachments, setAttachments }) => {
   const [option, setOption] = useState("")
-
+  
+//Add option
   const handleAddOption = () => {
     if (option.trim() !== "") {
       setAttachments([...attachments, option.trim()])
